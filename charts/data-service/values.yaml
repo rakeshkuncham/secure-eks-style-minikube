@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  repository: hashicorp/http-echo
+  pullPolicy: IfNotPresent
+  tag: latest
+
+args:
+  - "-text=Hello from data-service"
+
+service:
+  type: ClusterIP
+  port: 5678
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-credentials
+  namespace: system
+type: Opaque
+data:
+  accesskey: <base64-accesskey>
+  secretkey: <base64-secretkey>
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: data-service-minio-sa
+  namespace: application
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio
+        args:
+          - server
+          - /data
+        envFrom:
+          - secretRef:
+              name: minio-credentials
+        ports:
+          - containerPort: 9000
+        volumeMounts:
+          - name: data
+            mountPath: /data
+      volumes:
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: system
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9000
+    targetPort: 9000
+  selector:
+    app: minio

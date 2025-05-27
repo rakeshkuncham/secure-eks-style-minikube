@@ -1,0 +1,6 @@
+apiVersion: v2
+name: auth-service   # <-- must match the folder name or what you want
+description: A Helm chart for Kubernetes
+version: 0.1.0
+appVersion: "1.0"
+
